@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}README Studio{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .prose pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+        .prose code { background: #f1f5f9; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.875em; }
+        .prose pre code { background: transparent; padding: 0; }
+        .prose h1 { font-size: 2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
+        .prose h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .prose ul { list-style: disc; padding-left: 1.5rem; }
+        .prose ol { list-style: decimal; padding-left: 1.5rem; }
+        .prose table { width: 100%; border-collapse: collapse; }
+        .prose th, .prose td { border: 1px solid #e2e8f0; padding: 0.5rem; text-align: left; }
+        .prose th { background: #f8fafc; font-weight: 600; }
+        .prose blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; color: #64748b; }
+        .prose a { color: #3b82f6; text-decoration: underline; }
+        .prose img { max-width: 100%; }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white border-b border-gray-200 px-6 py-3">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <a href="/" class="text-xl font-bold text-gray-900">README Studio</a>
+            <span class="text-sm text-gray-500">Generate polished READMEs with AI</span>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-gray-200 mt-12 py-6 text-center text-sm text-gray-500">
+        README Studio &mdash; Powered by AI
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

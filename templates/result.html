@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}README Studio - {{ project_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{ project_name }}</h1>
+        <p class="text-gray-600">README generated successfully</p>
+    </div>
+    <a href="/" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+        &larr; Generate another
+    </a>
+</div>
+
+<!-- Tab Navigation -->
+<div class="flex border-b border-gray-200 mb-6 gap-1">
+    <button onclick="showTab('preview')" id="tab-preview"
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 tab-active">
+        Preview
+    </button>
+    <button onclick="showTab('raw')" id="tab-raw"
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+        Raw Markdown
+    </button>
+    {% if launch_kit %}
+    <button onclick="showTab('launch')" id="tab-launch"
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+        Launch Kit
+    </button>
+    {% endif %}
+</div>
+
+<!-- Preview Tab -->
+<div id="panel-preview" class="tab-panel">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 prose max-w-none">
+        {{ rendered_html | safe }}
+    </div>
+</div>
+
+<!-- Raw Markdown Tab -->
+<div id="panel-raw" class="tab-panel hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-sm text-gray-500">README.md</span>
+            <div class="flex gap-2">
+                <button onclick="copyMarkdown()" id="copy-btn"
+                        class="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors">
+                    Copy
+                </button>
+                <button onclick="downloadMarkdown()"
+                        class="px-3 py-1.5 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors">
+                    Download .md
+                </button>
+            </div>
+        </div>
+        <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm leading-relaxed whitespace-pre-wrap"><code id="raw-markdown">{{ raw_markdown }}</code></pre>
+    </div>
+</div>
+
+<!-- Launch Kit Tab -->
+{% if launch_kit %}
+<div id="panel-launch" class="tab-panel hidden">
+    <div class="space-y-6">
+        <!-- Product Hunt -->
+        {% if launch_kit.product_hunt_tagline %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-bold">PH</span>
+                Product Hunt
+            </h3>
+            <div class="space-y-2">
+                <p><strong class="text-gray-600 text-sm">Tagline:</strong> {{ launch_kit.product_hunt_tagline }}</p>
+                <p><strong class="text-gray-600 text-sm">Description:</strong> {{ launch_kit.product_hunt_description }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Hacker News -->
+        {% if launch_kit.hn_title %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-bold">HN</span>
+                Hacker News
+            </h3>
+            <p><strong class="text-gray-600 text-sm">Title:</strong> {{ launch_kit.hn_title }}</p>
+            <p class="mt-2 text-gray-700 whitespace-pre-line">{{ launch_kit.hn_comment }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Tweets -->
+        {% if launch_kit.tweets %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-xs font-bold">X</span>
+                Tweet Thread
+            </h3>
+            <div class="space-y-3">
+                {% for tweet in launch_kit.tweets %}
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                    <div class="flex justify-between items-start">
+                        <p class="text-gray-800 text-sm">{{ tweet }}</p>
+                        <span class="text-xs text-gray-400 ml-2 whitespace-nowrap">{{ tweet|length }}/280</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Reddit -->
+        {% if launch_kit.reddit_title %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-bold">R</span>
+                Reddit
+            </h3>
+            <p><strong class="text-gray-600 text-sm">Title:</strong> {{ launch_kit.reddit_title }}</p>
+            <p class="mt-2 text-gray-700 whitespace-pre-line">{{ launch_kit.reddit_body }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const rawMarkdown = document.getElementById('raw-markdown').textContent;
+
+    function showTab(tabId) {
+        // Hide all panels
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+        // Deactivate all tabs
+        document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active'));
+        // Show selected
+        document.getElementById('panel-' + tabId).classList.remove('hidden');
+        document.getElementById('tab-' + tabId).classList.add('tab-active');
+    }
+
+    function copyMarkdown() {
+        navigator.clipboard.writeText(rawMarkdown).then(() => {
+            const btn = document.getElementById('copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        });
+    }
+
+    function downloadMarkdown() {
+        const blob = new Blob([rawMarkdown], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'README.md';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+</script>
+{% endblock %}

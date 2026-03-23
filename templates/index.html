@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}README Studio - Generate Polished READMEs{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Generate a Polished README</h1>
+        <p class="text-gray-600">Fill in your project details and let AI create a professional README.md</p>
+    </div>
+
+    {% if error %}
+    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="/generate" method="POST" class="space-y-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <!-- Tool Name -->
+        <div>
+            <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">
+                Project Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="name" name="name" required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="my-awesome-tool">
+        </div>
+
+        <!-- One-liner -->
+        <div>
+            <label for="one_liner" class="block text-sm font-semibold text-gray-700 mb-1">
+                One-liner Description <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="one_liner" name="one_liner" required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="A CLI tool that does amazing things with minimal effort">
+        </div>
+
+        <!-- Language & Tech Stack -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="language" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Language
+                </label>
+                <select id="language" name="language"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Python">Python</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="TypeScript">TypeScript</option>
+                    <option value="Go">Go</option>
+                    <option value="Rust">Rust</option>
+                    <option value="Java">Java</option>
+                    <option value="Ruby">Ruby</option>
+                    <option value="C#">C#</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="tech_stack" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Tech Stack
+                </label>
+                <input type="text" id="tech_stack" name="tech_stack"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Flask, React, PostgreSQL, etc.">
+            </div>
+        </div>
+
+        <!-- Commands -->
+        <div>
+            <label for="commands" class="block text-sm font-semibold text-gray-700 mb-1">
+                Key Commands / Usage Examples
+            </label>
+            <textarea id="commands" name="commands" rows="4"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                      placeholder="mytool init&#10;mytool build --output dist/&#10;mytool deploy --env production"></textarea>
+        </div>
+
+        <!-- Features -->
+        <div>
+            <label for="features" class="block text-sm font-semibold text-gray-700 mb-1">
+                Features (one per line)
+            </label>
+            <textarea id="features" name="features" rows="4"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Fast parallel processing&#10;Simple YAML configuration&#10;Plugin architecture&#10;Docker support"></textarea>
+        </div>
+
+        <!-- Install Steps -->
+        <div>
+            <label for="install_steps" class="block text-sm font-semibold text-gray-700 mb-1">
+                Installation Steps
+            </label>
+            <textarea id="install_steps" name="install_steps" rows="3"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                      placeholder="pip install my-awesome-tool&#10;# or&#10;npm install -g my-awesome-tool"></textarea>
+        </div>
+
+        <!-- License & Extra -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="license_type" class="block text-sm font-semibold text-gray-700 mb-1">
+                    License
+                </label>
+                <select id="license_type" name="license_type"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="MIT">MIT</option>
+                    <option value="Apache-2.0">Apache 2.0</option>
+                    <option value="GPL-3.0">GPL 3.0</option>
+                    <option value="BSD-3-Clause">BSD 3-Clause</option>
+                    <option value="ISC">ISC</option>
+                    <option value="None">None</option>
+                </select>
+            </div>
+            <div>
+                <label for="extra_notes" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Extra Notes
+                </label>
+                <input type="text" id="extra_notes" name="extra_notes"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Any additional context...">
+            </div>
+        </div>
+
+        <!-- Options -->
+        <div class="flex items-center gap-6 pt-2">
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="launch_kit" value="1" class="rounded border-gray-300">
+                <span class="text-sm text-gray-700">Also generate Launch Kit (PH, HN, tweets)</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="offline" value="1" class="rounded border-gray-300">
+                <span class="text-sm text-gray-700">Offline mode (no AI, basic template)</span>
+            </label>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-4">
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                Generate README
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
