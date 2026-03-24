@@ -1,5 +1,8 @@
 # README Studio
 
+[![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-blue?logo=anthropic&logoColor=white)](https://claude.ai/code)
+
+
 Web app that generates polished README.md files from project descriptions. Fill in a form with your tool's details and get a professional README with rendered preview, plus optional launch materials for Product Hunt, Hacker News, Twitter, and Reddit.
 
 ## Features
